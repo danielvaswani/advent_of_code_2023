@@ -1,24 +1,12 @@
-import re
-from functools import reduce
 from aoc_tools import aoc_input
+from re import findall, split as split_regex
 
-total = 0
+cards = [
+    [findall("\d+", chars) for chars in split_regex(": | \| ", lines)][1:]
+    for lines in aoc_input(day=4, is_test=False)
+]
 
-for line in aoc_input(day=4, is_test=False):
-    n_winning_numbers = len(
-        reduce(
-            lambda win_nums, our_nums: win_nums & our_nums,
-            [
-                set(txt.split(" "))
-                for txt in " ".join(re.findall("\d+|\|", line.split(": ")[1])).split(
-                    " | "
-                )
-            ],
-        )
-    )
+n_matches = [len(set(c[0]) & set(c[1])) for c in cards]
+points = [2 ** (n - 1) if n > 0 else n for n in n_matches]
 
-    # print(line)
-    total += 2 ** (n_winning_numbers - 1) if n_winning_numbers > 0 else 0
-    # break
-
-print(total)
+print(sum(points))
